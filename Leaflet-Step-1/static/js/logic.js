@@ -5,9 +5,9 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 d3.json(queryUrl).then(function (earthquakeData, err) {
     var myMap = L.map("map", {
         center: [
-            37.09, -95.71
+            0,0
         ],
-        zoom: 5
+        zoom: 3.2
     })
     L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -27,12 +27,14 @@ d3.json(queryUrl).then(function (earthquakeData, err) {
     earthquakeData.features.forEach(function (feature) {
         //Long and Lat flipped in the JSON file. Thanks for that.
         L.circle([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-            fillOpacity: myColor(feature.geometry.coordinates[2]),
+            fillOpacity: myColor(feature.geometry.coordinates[2]), //depth
             color: "white",
-            fillColor: `black`,
-            radius: feature.properties.mag * 150000
+            fillColor: `red`,
+            radius: feature.properties.mag * 15000
         }).addTo(myMap).bindPopup("<h3>" + feature.properties.place +
-            "</h3><hr><p>" + new Date(feature.properties.time) + "</p>").addTo(myMap)
+            "</h3><hr><p>" + new Date(feature.properties.time) + "</p><p>"  
+            +"Magnitude: "+ feature.properties.mag + "</p><p>" 
+            +"Depth: "+ feature.geometry.coordinates[2] + "</p>")
 
     })
 })
